@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block head %}
+<title>Court Sniper</title>
+{% endblock %} {% block body %}
+<h1>Please enter your user data</h1>
+
+<form action="/user-data" method="POST">
+  <div class="form-group">
+    <label class="form-check-label">
+      Username:
+      <input class="form-control" required type="text" name="username" />
+    </label>
+  </div>
+  <div class="form-group">
+    <label class="form-check-label">
+      Password:
+      <input class="form-control" required type="password" name="password" />
+    </label>
+  </div>
+  <div class="form-group">
+    <label class="form-check-label">
+      UserId:
+      <input class="form-control" required type="number" name="userId" />
+    </label>
+  </div>
+  <button class="btn btn-primary" type="submit">Confirm</button>
+</form>
+{% endblock %}
