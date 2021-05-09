@@ -1,9 +1,26 @@
 {% extends 'base.html' %} {% block head %}
+<script>
+  $(document).ready(function () {
+    $(".toast").toast("show");
+  });
+</script>
 <title>Court Sniper</title>
 {% endblock %} {% block body %}
 <h1>Enter the court you want to snipe</h1>
 
 <form action="/" method="POST">
+  <div class="form-group">
+    <label class="form-check-label">
+      Schedule at:
+      <input
+        class="form-control"
+        required
+        type="datetime-local"
+        name="executionDate"
+      />
+    </label>
+  </div>
+
   <div class="form-group">
     <label class="form-check-label">
       Court Id:
@@ -37,4 +54,10 @@
 
   <button type="submit" class="btn btn-primary">Schedule</button>
 </form>
-{% endblock %}
+
+<br />
+{% if notifications %}
+<h2>Scheduled events</h2>
+{% endif %} {%for notification in notifications%}
+<div>{{notification | safe}}</div>
+{%endfor%} {% endblock %}
