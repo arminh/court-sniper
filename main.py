@@ -1,11 +1,23 @@
+from configparser import ConfigParser
 from datetime import datetime
 
 import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-tokenEndpoint = "https://auth.courtculture.cc/auth/realms/courtculture/protocol/openid-connect/token";
-courtsUrl = "https://app.courtculture.cc/api/courts"
-clientId = "cc-app-client"
+tokenEndpoint = ""
+courtsUrl = ""
+clientId = ""
+
+def parseConfig():
+    config = ConfigParser()
+
+    config.read('config.ini')
+    global tokenEndpoint 
+    tokenEndpoint = config.get('main', 'tokenEndpoint')
+    global courtsUrl
+    courtsUrl = config.get('main', 'courtsUrl')
+    global clientId
+    clientId = config.get('main', 'clientId')
 
 
 def getToken(username, password):
@@ -15,6 +27,7 @@ def getToken(username, password):
         "username": username,
         "password": password
     }
+    print("Token endpoint: ", tokenEndpoint)
 
     response = requests.post(url = tokenEndpoint, data = params)
     data = response.json()
@@ -53,12 +66,13 @@ if __name__ == '__main__':
     password = 'a12345'
     userId = "8186"
     courtId = "213"
-    fromDate = "2021-05-06T16:00"
-    toDate = "2021-05-06T18:00"
+    fromDate = "2021-05-10T16:00"
+    toDate = "2021-05-10T18:00"
 
+    parseConfig()
     scheduler = BlockingScheduler()
     scheduler.add_executor('processpool')
-    job = scheduler.add_job(getTokenAndCreateActivity, 'date', run_date=datetime(2021, 5, 5, 23, 27), args=[username, password, userId, courtId, fromDate, toDate])
+    job = scheduler.add_job(getTokenAndCreateActivity, 'date', run_date=datetime.now(), args=[username, password, userId, courtId, fromDate, toDate])
 
     try:
         scheduler.start()
