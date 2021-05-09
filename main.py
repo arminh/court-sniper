@@ -17,7 +17,7 @@ def schedule_add_activity(executionDate: str, username: str, password: str, user
     date = dateutil.parser.isoparse(executionDate)
     job = scheduler.add_job(api.get_token_and_create_activity, 'date', run_date=date, args=[username, password, userId, courtId, fromDate, toDate])
     scheduler.start()
-    notifications.append(f'Event: <a href="https://app.courtculture.cc/radar(place:courts/{courtId})" target="_blank">Court {courtId}</a> from {fromDate} to {toDate}')
+    notifications.append(f'Activity: <a href="https://app.courtculture.cc/radar(place:courts/{courtId})" target="_blank">Court {courtId}</a> from {fromDate} to {toDate}')
 
     return redirect("/")
 
@@ -50,12 +50,5 @@ if __name__ == '__main__':
     config = Config()
     global api
     api = Api(config)
-
-    username = 'bla@blub.at'
-    password = 'a12345'
-    userId = "8186"
-    courtId = "213"
-    fromDate = "2021-05-10T16:00"
-    toDate = "2021-05-10T18:00"
 
     app.run(debug=True)
