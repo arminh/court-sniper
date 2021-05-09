@@ -9,6 +9,7 @@ from config import Config
 
 app = Flask(__name__)
 notifications = []
+loginError = None
 
 def schedule_add_activity(executionDate: str, username: str, password: str, userId: str, courtId: str, fromDate: str, toDate: str):
     scheduler = BackgroundScheduler()
@@ -34,15 +35,23 @@ def index():
     return render_template('index.html', notifications=notifications);
 
 @app.route('/user-data', methods=["GET", "POST"])
-def user_data(): 
+def user_data():
     if request.method == "POST":
         if (config.username == None) or (config.password == None) or (config.userId == None):
-            config.set_username(request.form["username"])
-            config.set_password(request.form["password"])
-            config.set_userId(request.form["userId"])
-            return redirect("/")
+            username = request.form["username"]
+            password = request.form["password"]
+            config.set_username(username)
+            config.set_password(password)
+            try:
+                config.set_userId(str(api.get_user_id(username, password)))
+                return redirect("/")
+            except Exception:
+                global loginError
+                loginError = "Username or password incorrect"
+                return redirect("/user-data")
 
-    return render_template('user-data.html'); 
+
+    return render_template('user-data.html', loginError=loginError); 
     
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ class Config:
 
     config = None
     tokenEndpoint = None
+    sessionUrl = None
     courtsUrl = None
     clientId = None
     username = None
@@ -18,6 +19,8 @@ class Config:
         self.tokenEndpoint = self.config.get('main', 'tokenEndpoint')
         self.courtsUrl = self.config.get('main', 'courtsUrl')
         self.clientId = self.config.get('main', 'clientId')
+        self.sessionUrl = self.config.get("main", "sessionUrl")
+
         if self.config.has_option('main', 'username'):
             self.username = self.config.get('main', 'username')
         if self.config.has_option('main', 'password'):
