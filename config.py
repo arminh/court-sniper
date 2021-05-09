@@ -1,12 +1,9 @@
 from configparser import ConfigParser
 
-from cryptography.fernet import Fernet
-
 
 class Config:
 
     config = None
-    fernet = None
     tokenEndpoint = None
     sessionUrl = None
     courtsUrl = None
@@ -16,9 +13,6 @@ class Config:
     userId = None
 
     def __init__(self):
-        key = Fernet.generate_key()        
-        self.fernet = Fernet(key)
-
         self.config = ConfigParser()
         self.config.read('config.ini')
 
@@ -30,7 +24,7 @@ class Config:
         if self.config.has_option('main', 'username'):
             self.username = self.config.get('main', 'username')
         if self.config.has_option('main', 'password'):
-            self.password = self.fernet.decrypt(self.config.get('main', 'password').encode()).decode()
+            self.password = self.config.get('main', 'password')
         if self.config.has_option('main', 'userId'):
             self.userId = self.config.get('main', 'userId')
 
@@ -45,7 +39,7 @@ class Config:
 
     def set_password(self, value: str):
         self.password = value;
-        self.write_config_to_file("password", self.fernet.encrypt(value.encode()).decode())
+        self.write_config_to_file("password", value)
 
     def set_userId(self, value: str):
         self.userId = value;
