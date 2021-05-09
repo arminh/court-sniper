@@ -1,66 +1,25 @@
-from configparser import ConfigParser
 from datetime import datetime
 
-import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
+from flask import Flask
 
-tokenEndpoint = ""
-courtsUrl = ""
-clientId = ""
+import api
+import config
 
-def parseConfig():
-    config = ConfigParser()
+app = Flask(__name__)
 
-    config.read('config.ini')
-    global tokenEndpoint 
-    tokenEndpoint = config.get('main', 'tokenEndpoint')
-    global courtsUrl
-    courtsUrl = config.get('main', 'courtsUrl')
-    global clientId
-    clientId = config.get('main', 'clientId')
+def scheduleAddActivity(username: str, password: str, userId: str, courtId: str, fromDate: str, toDate: str):
+    scheduler = BlockingScheduler()
+    scheduler.add_executor('processpool')
+    job = scheduler.add_job(api.getTokenAndCreateActivity, 'date', run_date=datetime.now(), args=[username, password, userId, courtId, fromDate, toDate])
 
-
-def getToken(username, password):
-    params = {
-        "grant_type": 'password',
-        "client_id": clientId,
-        "username": username,
-        "password": password
-    }
-    print("Token endpoint: ", tokenEndpoint)
-
-    response = requests.post(url = tokenEndpoint, data = params)
-    data = response.json()
-    accessToken = data.get("access_token")
-    return accessToken + "___" + accessToken + "___" + accessToken;
-
-
-def getTokenAndCreateActivity(username, password, userId, courtId, fromDate, toDate):
-    token = getToken(username, password)
-    createActivity(token, userId, courtId, fromDate, toDate)
-
-
-def createActivity(token, userId, courtId, fromDate, toDate):
-    headers = { "Cookie": "q_session=" + token }
-    url = f'{courtsUrl}/{courtId}/activities'
-
-    payload = {
-        "begin": fromDate,
-        "end": toDate,
-        "id": userId,
-        "identity": {"id": userId, "anonymous": "false"},
-        "courtId": courtId,
-        "description": "I'm on the court.",
-        "gadgetAvailable": "true",
-        "anonymous": "false",
-        "requiredParticipants": "0"
-    }
-
-    response = requests.post(url=url, json=payload, headers=headers)
-    data = response.json()
-    print(data)
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
 
 if __name__ == '__main__':
+    config.parseConfig()
 
     username = 'bla@blub.at'
     password = 'a12345'
@@ -69,12 +28,4 @@ if __name__ == '__main__':
     fromDate = "2021-05-10T16:00"
     toDate = "2021-05-10T18:00"
 
-    parseConfig()
-    scheduler = BlockingScheduler()
-    scheduler.add_executor('processpool')
-    job = scheduler.add_job(getTokenAndCreateActivity, 'date', run_date=datetime.now(), args=[username, password, userId, courtId, fromDate, toDate])
-
-    try:
-        scheduler.start()
-    except (KeyboardInterrupt, SystemExit):
-        pass
+    scheduleAddActivity(username, password, userId, courtId, fromDate, toDate)

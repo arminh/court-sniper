@@ -1,4 +1,5 @@
 appdirs==1.4.4
+APScheduler==3.7.0
 apturl==0.5.2
 asn1crypto==0.24.0
 beautifulsoup4==4.6.0
@@ -9,6 +10,7 @@ chardet==3.0.4
 click==6.7
 colorama==0.3.7
 command-not-found==0.3
+configparser==5.0.2
 cryptography==2.1.4
 cupshelpers==1.0
 defer==1.0.6
@@ -73,6 +75,7 @@ system-service==0.3
 systemd-python==234
 tabulate==0.7.7
 typing-extensions==3.10.0.0
+tzlocal==2.1
 ubuntu-drivers-common==0.0.0
 ufw==0.36
 unattended-upgrades==0.1
