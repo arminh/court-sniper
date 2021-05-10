@@ -1,4 +1,6 @@
+import dateutil.parser
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class Api:
@@ -64,23 +66,10 @@ class Api:
         data = response.json()
         print(data)
 
-
-
-    if __name__ == '__main__':
-
-        username = 'bla@blub.at'
-        password = 'a12345'
-        userId = "8186"
-        courtId = "213"
-        fromDate = "2021-05-10T16:00"
-        toDate = "2021-05-10T18:00"
-
-        parseConfig()
-        scheduler = BlockingScheduler()
+    def schedule_add_activity(self, executionDate: str, username: str, password: str, userId: str, courtId: str, fromDate: str, toDate: str):
+        scheduler = BackgroundScheduler()
         scheduler.add_executor('processpool')
-        job = scheduler.add_job(get_token_and_create_activity, 'date', run_date=datetime.now(), args=[username, password, userId, courtId, fromDate, toDate])
 
-        try:
-            scheduler.start()
-        except (KeyboardInterrupt, SystemExit):
-            pass
+        date = dateutil.parser.isoparse(executionDate)
+        job = scheduler.add_job(self.get_token_and_create_activity, 'date', run_date=date, args=[username, password, userId, courtId, fromDate, toDate])
+        scheduler.start()

@@ -8,7 +8,7 @@ class Config:
     sessionUrl = None
     courtsUrl = None
     clientId = None
-    username = None
+    username = ""
     password = None
     userId = None
 
@@ -23,8 +23,6 @@ class Config:
 
         if self.config.has_option('main', 'username'):
             self.username = self.config.get('main', 'username')
-        if self.config.has_option('main', 'password'):
-            self.password = self.config.get('main', 'password')
         if self.config.has_option('main', 'userId'):
             self.userId = self.config.get('main', 'userId')
 
@@ -39,7 +37,6 @@ class Config:
 
     def set_password(self, value: str):
         self.password = value;
-        self.write_config_to_file("password", value)
 
     def set_userId(self, value: str):
         self.userId = value;
